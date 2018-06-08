@@ -47,6 +47,7 @@ Builder.load_string('''
             on_value: app.page.theta = 0.01 + 1.57 * (1 - self.value)
 ''')
 
+
 class PageCurl(Widget):
     source = StringProperty()
     theta = NumericProperty(90.)
@@ -108,21 +109,20 @@ class PageCurl(Widget):
                                 i, i + mx, i + 1 + mx]
                     if DEBUG:
                         indices_debug += [
-                                i, i + 1,
-                                i, i + mx,
-                                i + 1, i + mx]
+                            i, i + 1,
+                            i, i + mx,
+                            i + 1, i + mx]
 
         else:
             texture = None
             mode = 'points'
             indices = range(mx * my)
 
-
         self.g_mesh = Mesh(vertices=vertices, indices=indices,
-                mode=mode, texture=texture)
+                           mode=mode, texture=texture)
         if DEBUG:
             self.g_mesh2 = Mesh(vertices=vertices, indices=indices_debug,
-                    mode='lines')
+                                mode='lines')
         self.o_vertices = vertices
 
     def deform(self, *args):
@@ -152,6 +152,7 @@ class PageCurl(Widget):
 class Controls(FloatLayout):
     pass
 
+
 class PageCurlApp(App):
     def build(self):
         root = FloatLayout()
@@ -159,5 +160,6 @@ class PageCurlApp(App):
         root.add_widget(self.page)
         root.add_widget(Controls())
         return root
+
 
 PageCurlApp().run()

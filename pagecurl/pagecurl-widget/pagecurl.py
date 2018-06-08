@@ -10,7 +10,7 @@ from kivy.properties import StringProperty, NumericProperty
 from kivy.uix.widget import Widget
 from kivy.uix.floatlayout import FloatLayout
 from kivy.core.image import Image as CoreImage
-from kivy.graphics import Mesh, RenderContext, Callback, BindTexture, Color, Rectangle
+from kivy.graphics import Mesh, RenderContext, Callback, BindTexture, Rectangle
 from math import sin, cos, pi
 from kivy.lang import Builder
 from kivy.resources import resource_find
@@ -60,8 +60,10 @@ Builder.load_string('''
                 max: 200.
 ''')
 
+
 def funcLinear(ft, f0, f1):
     return f0 + (f1 - f0) * ft
+
 
 class PageCurl(Widget):
     source = StringProperty()
@@ -99,11 +101,12 @@ class PageCurl(Widget):
         proj = Matrix().view_clip(0, self.width, 0, self.height, -1000, 1000, 0)
         self.c_front['projection_mat'] = proj
         self.c_front['cylinder_position'] = map(float, (self.cy_x, self.cy_y))
-        self.c_front['cylinder_direction'] = (cos(self.cy_dir), sin(self.cy_dir))
+        self.c_front['cylinder_direction'] = (
+            cos(self.cy_dir), sin(self.cy_dir))
         self.c_front['cylinder_radius'] = float(self.cy_radius)
 
         for key in ('projection_mat', 'cylinder_position', 'cylinder_radius',
-                'cylinder_direction'):
+                    'cylinder_direction'):
             self.c_back[key] = self.c_front[key]
             self.c_backshadow[key] = self.c_front[key]
 
@@ -155,12 +158,12 @@ class PageCurl(Widget):
                 indices += [i, i + 1, i + 1 + mx,
                             i, i + 1 + mx, i + mx]
                 indices_back += [i, i + 1 + mx, i + 1,
-                            i, i + mx, i + 1 + mx]
+                                 i, i + mx, i + 1 + mx]
 
         self.g_mesh = Mesh(vertices=vertices, indices=indices,
-                mode=mode, texture=texture, fmt=self.vertex_format)
+                           mode=mode, texture=texture, fmt=self.vertex_format)
         self.g_mesh_back = Mesh(vertices=vertices, indices=indices_back,
-                mode=mode, texture=texture, fmt=self.vertex_format)
+                                mode=mode, texture=texture, fmt=self.vertex_format)
         self.o_vertices = vertices
 
         self.c_front.add(BindTexture(source='frontshadow.png', index=1))
@@ -180,8 +183,10 @@ class PageCurl(Widget):
 
         self.cy_x = funcLinear(t, self.width, -self.width / 2.0)
 
+
 class Controls(FloatLayout):
     pass
+
 
 class PageCurlApp(App):
     def build(self):
@@ -192,5 +197,6 @@ class PageCurlApp(App):
         root.add_widget(self.page)
         root.add_widget(Controls())
         return root
+
 
 PageCurlApp().run()

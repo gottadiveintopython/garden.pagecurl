@@ -1,8 +1,8 @@
 from kivy.graphics import Fbo, ClearColor, ClearBuffers, \
-        Canvas, RenderContext, BindTexture, Callback, \
-        Mesh, Rectangle, Color
+    Canvas, RenderContext, BindTexture, Callback, \
+    Mesh, Rectangle, Color
 from kivy.graphics.opengl import glEnable, glDisable, \
-        GL_DEPTH_TEST, GL_CULL_FACE
+    GL_DEPTH_TEST, GL_CULL_FACE
 from kivy.uix.screenmanager import TransitionBase
 from kivy.resources import resource_find
 from kivy.graphics.transformation import Matrix
@@ -10,8 +10,10 @@ from kivy.properties import NumericProperty
 from kivy.animation import AnimationTransition
 from math import cos, sin
 
+
 def funcLinear(ft, f0, f1):
     return f0 + (f1 - f0) * ft
+
 
 class PageCurlTransition(TransitionBase):
 
@@ -74,7 +76,8 @@ class PageCurlTransition(TransitionBase):
             self.cy_dir = funcLinear(AnimationTransition.out_circ(dt), 0, 1.55)
         else:
             self.cy_dir = 1.5
-        self.cy_x = funcLinear(t, self.screen_in.width, -self.screen_in.width / 2.0)
+        self.cy_x = funcLinear(
+            t, self.screen_in.width, -self.screen_in.width / 2.0)
         self.update_glsl()
 
     def update_glsl(self, *largs):
@@ -82,11 +85,12 @@ class PageCurlTransition(TransitionBase):
         proj = Matrix().view_clip(0, size[0], 0, size[1], -1000, 1000, 0)
         self.c_front['projection_mat'] = proj
         self.c_front['cylinder_position'] = map(float, (self.cy_x, self.cy_y))
-        self.c_front['cylinder_direction'] = (cos(self.cy_dir), sin(self.cy_dir))
+        self.c_front['cylinder_direction'] = (
+            cos(self.cy_dir), sin(self.cy_dir))
         self.c_front['cylinder_radius'] = float(self.cy_radius)
 
         for key in ('projection_mat', 'cylinder_position', 'cylinder_radius',
-                'cylinder_direction'):
+                    'cylinder_direction'):
             self.c_back[key] = self.c_front[key]
             self.c_backshadow[key] = self.c_front[key]
 
@@ -133,12 +137,12 @@ class PageCurlTransition(TransitionBase):
                 indices += [i, i + 1, i + 1 + mx,
                             i, i + 1 + mx, i + mx]
                 indices_back += [i, i + 1 + mx, i + 1,
-                            i, i + mx, i + 1 + mx]
+                                 i, i + mx, i + 1 + mx]
 
         self.g_mesh = Mesh(vertices=vertices, indices=indices,
-                mode=mode, texture=self.fbo_out.texture, fmt=self.vertex_format)
+                           mode=mode, texture=self.fbo_out.texture, fmt=self.vertex_format)
         self.g_mesh_back = Mesh(vertices=vertices, indices=indices_back,
-                mode=mode, texture=self.fbo_out.texture, fmt=self.vertex_format)
+                                mode=mode, texture=self.fbo_out.texture, fmt=self.vertex_format)
         self.o_vertices = vertices
 
         self.c_front.add(BindTexture(source='frontshadow.png', index=1))
@@ -146,6 +150,7 @@ class PageCurlTransition(TransitionBase):
         self.c_backshadow.add(Rectangle(size=size))
         self.c_back.add(BindTexture(source='backshadow.png', index=1))
         self.c_back.add(self.g_mesh_back)
+
 
 if __name__ == '__main__':
     from kivy.uix.screenmanager import Screen, ScreenManager
@@ -164,6 +169,7 @@ if __name__ == '__main__':
             Button:
                 on_press: app.root.current = app.root.next()
     ''')
+
     class ImageScreen(Screen):
         source = StringProperty()
 
@@ -179,5 +185,3 @@ if __name__ == '__main__':
             return root
 
     TestApp().run()
-
-
