@@ -10,6 +10,8 @@ from kivy.properties import NumericProperty
 from kivy.animation import AnimationTransition
 from math import cos, sin
 
+from six.moves import range as xrange
+
 
 def funcLinear(ft, f0, f1):
     return f0 + (f1 - f0) * ft
@@ -84,7 +86,7 @@ class PageCurlTransition(TransitionBase):
         size = self.manager.size
         proj = Matrix().view_clip(0, size[0], 0, size[1], -1000, 1000, 0)
         self.c_front['projection_mat'] = proj
-        self.c_front['cylinder_position'] = map(float, (self.cy_x, self.cy_y))
+        self.c_front['cylinder_position'] = tuple(map(float, (self.cy_x, self.cy_y)))
         self.c_front['cylinder_direction'] = (
             cos(self.cy_dir), sin(self.cy_dir))
         self.c_front['cylinder_radius'] = float(self.cy_radius)
@@ -123,13 +125,13 @@ class PageCurlTransition(TransitionBase):
                 vertices += [x, y, 0, x / fw, y / fh]
 
         # trace a triangles mesh
-        mx = 1 + width / step_width
-        my = 1 + height / step_height
+        mx = 1 + width // step_width
+        my = 1 + height // step_height
 
         mode = 'triangles'
         self.vertex_format = [
-            ('vPosition', 3, 'float'),
-            ('vTexCoords0', 2, 'float')]
+            (b'vPosition', 3, 'float'),
+            (b'vTexCoords0', 2, 'float')]
 
         for x in xrange(mx - 1):
             for y in xrange(my - 1):
@@ -177,7 +179,6 @@ if __name__ == '__main__':
         def build(self):
             root = ScreenManager(transition=PageCurlTransition(
                 duration=2.0),
-                #);dict(
                 size_hint=(0.5, 0.5),
                 pos_hint={'center_x': 0.5, 'center_y': 0.5})
             root.add_widget(ImageScreen(name='hello', source='pic1.jpg'))

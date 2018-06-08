@@ -10,6 +10,8 @@ from kivy.animation import AnimationTransition
 from math import cos, sin, pi
 from os.path import join, dirname
 
+from six.moves import range as xrange
+
 DEBUG = False
 TILE = 20
 
@@ -61,11 +63,11 @@ class PageCurlTransition(TransitionBase):
         self.screen_in.size = self.screen_out.size
         self.manager.real_remove_widget(self.screen_out)
 
-        print '-----------'
-        print 'add_screen', screen, screen.canvas
-        print 'screen_in', self.screen_in, self.screen_in.parent
-        print 'screen_out', self.screen_out, self.screen_out.parent
-        print '-----------'
+        print('-----------')
+        print('add_screen', screen, screen.canvas)
+        print('screen_in', self.screen_in, self.screen_in.parent)
+        print('screen_out', self.screen_out, self.screen_out.parent)
+        print('-----------')
         self.fbo_in = self.make_screen_fbo(self.screen_in, mode='in')
         self.fbo_out = self.make_screen_fbo(self.screen_out, mode='out')
         self.manager.canvas.add(self.fbo_in)
@@ -161,7 +163,7 @@ class PageCurlTransition(TransitionBase):
         size = self.manager.size
         proj = Matrix().view_clip(0, size[0], 0, size[1], -1000, 1000, 0)
         self.c_front['projection_mat'] = proj
-        self.c_front['cylinder_position'] = map(float, (self.cy_x, self.cy_y))
+        self.c_front['cylinder_position'] = tuple(map(float, (self.cy_x, self.cy_y)))
         self.c_front['cylinder_direction'] = (
             cos(self.cy_dir), sin(self.cy_dir))
         self.c_front['cylinder_radius'] = float(self.cy_radius)
@@ -197,12 +199,12 @@ class PageCurlTransition(TransitionBase):
                 vertices += [x, y, 0, x / fw, y / fh]
 
         # trace a triangles mesh
-        mx = 1 + width / step_width
-        my = 1 + height / step_height
+        mx = 1 + width // step_width
+        my = 1 + height // step_height
 
         self.vertex_format = [
-            ('vPosition', 3, 'float'),
-            ('vTexCoords0', 2, 'float')]
+            (b'vPosition', 3, 'float'),
+            (b'vTexCoords0', 2, 'float')]
 
         mode = 'line_loop' if DEBUG else 'triangles'
         for x in xrange(mx - 1):
@@ -257,8 +259,8 @@ if __name__ == '__main__':
                 duration=2.0),
                 size_hint=(0.5, 0.5),
                 pos_hint={'center_x': 0.5, 'center_y': 0.5})
-            root.add_widget(ImageScreen(name='hello', source='pic1.jpg'))
-            root.add_widget(ImageScreen(name='hello2', source='pic2.jpg'))
+            root.add_widget(ImageScreen(name='hello', source='../../pagecurl-widget/pic1.jpg'))
+            root.add_widget(ImageScreen(name='hello2', source='../../pagecurl-widget/pic2.jpg'))
             return root
 
     TestApp().run()

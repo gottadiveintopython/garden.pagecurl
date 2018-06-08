@@ -19,6 +19,8 @@ from kivy.clock import Clock
 from kivy.graphics.transformation import Matrix
 from kivy.animation import AnimationTransition
 
+from six.moves import range as xrange
+
 DEBUG = False
 RAD = 180. / pi
 
@@ -100,7 +102,7 @@ class PageCurl(Widget):
     def update_glsl(self, *largs):
         proj = Matrix().view_clip(0, self.width, 0, self.height, -1000, 1000, 0)
         self.c_front['projection_mat'] = proj
-        self.c_front['cylinder_position'] = map(float, (self.cy_x, self.cy_y))
+        self.c_front['cylinder_position'] = tuple(map(float, (self.cy_x, self.cy_y)))
         self.c_front['cylinder_direction'] = (
             cos(self.cy_dir), sin(self.cy_dir))
         self.c_front['cylinder_radius'] = float(self.cy_radius)
@@ -126,8 +128,8 @@ class PageCurl(Widget):
         m = 20
         width = self.width
         height = self.height
-        step_width = width / (width / m)
-        step_height = height / (height / m)
+        step_width = width // (width // m)
+        step_height = height // (height // m)
         vertices = []
         indices = []
         indices_back = []
@@ -140,8 +142,8 @@ class PageCurl(Widget):
                 vertices += [x, y, 0, x / fw, 1. - y / fh]
 
         # trace a triangles mesh
-        mx = 1 + self.width / step_width
-        my = 1 + self.height / step_height
+        mx = 1 + self.width // step_width
+        my = 1 + self.height // step_height
 
         texture = self.texture
         mode = 'triangles'
@@ -149,8 +151,8 @@ class PageCurl(Widget):
             texture = None
             mode = 'points'
         self.vertex_format = [
-            ('vPosition', 3, 'float'),
-            ('vTexCoords0', 2, 'float')]
+            (b'vPosition', 3, 'float'),
+            (b'vTexCoords0', 2, 'float')]
 
         for x in xrange(mx - 1):
             for y in xrange(my - 1):
